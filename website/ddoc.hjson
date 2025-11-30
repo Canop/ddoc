@@ -1,0 +1,38 @@
+
+title: "ddoc"
+description: ""
+favicon: img/favicon.ico
+
+pages: {
+    Overview: index.md
+    Usage: {
+        "Install ddoc": install.md
+        "Setup your site": setup.md
+        "Edit your site": edit.md
+    }
+    Exemples: exemples.md
+}
+
+nav_links: {
+    before_menu: [
+        {
+            img: img/dystroy-rust-white.svg
+            url: https://dystroy.org
+            alt: dystroy.org homepage
+            class: external-nav-link
+        }
+    ]
+    after_menu: [
+        {
+            img: img/github-mark-white.svg
+            class: external-nav-link
+            alt: GitHub
+            url: https://github.com/Canop/ddoc
+        }
+    ]
+}
+
+ui: {
+    hamburger_checkbox: true
+}
+

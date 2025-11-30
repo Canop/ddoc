@@ -73,6 +73,7 @@ impl Menu {
         html.push_str("</nav>\n");
     }
     /// Generate the HTML for a menu or submenu hosted on a page.
+    #[allow(clippy::only_used_in_recursion)]
     fn push_nav_item_html(
         &self,
         html: &mut String,

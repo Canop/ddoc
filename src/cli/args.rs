@@ -29,6 +29,10 @@ pub struct Args {
     #[arg(long)]
     pub version: bool,
 
+    /// Initialize a ddoc project in the specified directory
+    #[arg(long)]
+    pub init: bool,
+
     /// Serve files (for local development)
     #[arg(long)]
     pub serve: bool,

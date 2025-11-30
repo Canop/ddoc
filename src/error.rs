@@ -23,6 +23,8 @@ pub enum DdError {
     InvalidPagePath { path: String },
     #[error("Internal error: {0}")]
     Internal(String),
+    #[error("Init not possible: {0}")]
+    InitNotPossible(String),
 }
 
 pub type DdResult<T> = Result<T, DdError>;

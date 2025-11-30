@@ -106,7 +106,6 @@ impl Project {
         }
         let mut file = fs::File::create(&html_path)?;
         file.write_all(html.as_bytes())?;
-        //eprintln!("Wrote {}", html_path.display());
         Ok(())
     }
 

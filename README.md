@@ -17,82 +17,38 @@
 
 <!-- cradoc start -->
 
-**Warning: ddoc isn't ready for use yet - don't even try**
 
-## Introduction
+**ddoc** is a markdown based static site generator.
 
-**ddoc** is a powerless static site generator specialized for documentation sites,
+**Complete documentation at [https://dystroy.org/ddoc](https://dystroy.org/ddoc)**
 
-Examples:
+## Usage overview
 
-* [Bacon documentation](https://dystroy.org/bacon/) is rendered from these [sources](https://github.com/Canop/bacon/tree/main/website)
+Create a directory, then move to it
 
-## Good reasons NOT to use ddoc
+    mkdir website & cd website
 
-* ddoc assumes you want to write CSS, not choose among themes
-* ddoc has less features than any other static site generator
-* this tool is super very new and not battle tested
+Initialize the site:
 
-## Project Goals
+    ddoc --init
 
-* Be a reliable static site generator for documentation sites
-* Complete and reasonnable navigation (menu, TOC, links)
-* Avoid breaks among versions - no imported CSS or layout related HTML
-* Support images, tables, code sections, links, etc.
-* Cross-platform and easy to install - a single binary with no dependencies
-* Clean URL paths, no history shenanigans, obvious links
-* Work without JS (but you can add your own JS if you want to)
+This creates:
 
-## Project Non Goals
+- a `.gitignore` file, which eases inclusion of your site in a git managed project
+- a `ddoc.hjson` file, holding the basic properties and navigation
+- a `src` folder, for your markdown files, CSS style sheets and images
 
-* Be as generic as zola, mkdocs, hugo, etc. and try to replace them
-* Templating - **ddoc probably can't do what you need**
-* Theming system - you provide your own CSS
+`/src/css/site.css` is a default CSS file, a very simple one which you can remove, or keep as basis for your own incremental changes to get the layout and look you desire.
 
-## Possible future goals
+To build your site, run
 
-* Search
-* Automated "list" pages - to make ddoc suitable for blogs, albums, etc.
-* Image processing
-* Syntax highlighting in code
+    ddoc
 
-## Features
+This updates a `site` directory, whose content can be sent to your server.
 
-* Generated HTML is semantic and easy to style with CSS
-* All internal links are relative, ddoc doesn't need to know the base url of the site
-* No hidden CSS or JS is injected, only yours
-* No templating - everything is built from your markdown, static files, and the ddoc.hjson config
+If you want to test it locally, you may run
 
-## Usage
+    ddoc --serve
 
-*to be written*
-
-## Include images
-
-Images can be included in markdown using standard syntax:
-```markdown
-![Alt text](img/my_image.png)
-```
-
-You'll also have references to images in your ddoc.hjson config file, for example in menu
-links.
-
-In both cases, ddoc will rewrite the image URL to point to the correct location whatever
-the depth of the page including the image. Your reference just has to start with `img/`.
-
-## Internal links
-
-In your markdown or in the ddoc.hjson config file, you can refer to other pages, or locations
-in other pages, using either relative or absolute links.
-
-A relative link is like `../other_page.md#some_section` (the `.md` part is optional).
-
-An absolute link is like `/path/to/other_page#some_section`.
-
-The leading `/` in absolute links refers to the root of your documentation site and the URL
-will be rewritten to be relative to the current page depending on its depth.
 <!-- cradoc end -->
-
-
-
 

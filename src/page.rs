@@ -14,6 +14,7 @@ use {
         fs,
         path::PathBuf,
     },
+    termimad::crossterm::style::Stylize,
 };
 
 pub struct Page {
@@ -127,11 +128,11 @@ impl Page {
     pub fn write_html_article(
         &self,
         html: &mut String,
+        md: String,
         project: &Project,
     ) -> DdResult<()> {
         let mut toc = String::new(); // stores the LIs of the nav.page-toc
 
-        let md = fs::read_to_string(&self.md_file_path)?;
         let mut events = Parser::new_ext(&md, pcm::Options::all()).collect::<Vec<_>>();
         for i in 0..events.len() {
             match &mut events[i] {
@@ -200,12 +201,13 @@ impl Page {
         html.push_str("<a class=toc-title href=\"#top\">");
         html.push_str(&self.title); // TODO escape HTML
         html.push_str("</a>\n");
-        html.push_str("<ul class=toc-content>");
-        html.push_str(&toc);
-        html.push_str("</ul>");
-        html.push_str("</nav>\n");
-        html.push_str("</aside>\n");
-
+        if !toc.is_empty() {
+            html.push_str("<ul class=toc-content>");
+            html.push_str(&toc);
+            html.push_str("</ul>");
+            html.push_str("</nav>\n");
+            html.push_str("</aside>\n");
+        }
         // push the HTML matching the file's Markdown content
         html.push_str("<main>\n");
         push_html(html, events.into_iter());
@@ -214,15 +216,25 @@ impl Page {
         html.push_str("</article>\n");
         Ok(())
     }
+
     pub fn write_html(
         &self,
         html: &mut String,
         project: &Project,
     ) -> DdResult<()> {
+        // first check that the page's md file exists
+        let Ok(md) = fs::read_to_string(&self.md_file_path) else {
+            eprintln!(
+                "{} {} could not be read, skipping.",
+                "ERROR:".red().bold(),
+                self.md_file_path.to_string_lossy().yellow()
+            );
+            return Ok(());
+        };
         self.write_html_head(html, project)?;
         html.push_str("<body>\n");
         self.write_html_header(html, project)?; // header with logos & site-nav
-        self.write_html_article(html, project)?; // page-to & article
+        self.write_html_article(html, md, project)?; // page-to & article
         html.push_str("</html>\n");
         Ok(())
     }
