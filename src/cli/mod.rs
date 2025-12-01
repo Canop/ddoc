@@ -44,8 +44,18 @@ pub fn run() -> DdResult<()> {
         path: project_path.to_owned(),
         error,
     })?;
-    let project = Project::load(&project_path)?;
 
+    let project = match Project::load(&project_path) {
+        Err(DdError::ConfigNotFound) => {
+            eprintln!(
+                "{}\nYou can initialize ddoc with {}",
+                "No ddoc.hjson found".red().bold(),
+                "ddoc --init".green().bold(),
+            );
+            return Ok(());
+        }
+        res => res,
+    }?;
     project.build()?;
 
     if args.serve {

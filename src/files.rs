@@ -8,6 +8,7 @@ use {
     },
 };
 
+/// Deserialize an object from a JSON, TOML, or HJSON file.
 pub fn read_file<T, P: AsRef<Path>>(path: P) -> DdResult<T>
 where
     T: DeserializeOwned,
@@ -21,6 +22,10 @@ where
     let obj = match path.extension().and_then(|s| s.to_str()) {
         Some("hjson") => deser_hjson::from_reader(reader)?,
         Some("json") => serde_json::from_reader(reader)?,
+        Some("toml") => {
+            let toml = std::io::read_to_string(reader)?;
+            toml::from_str(&toml)?
+        }
         _ => return Err(DdError::UnsupportedFileFormat(path.to_owned())),
     };
     Ok(obj)

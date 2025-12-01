@@ -44,7 +44,15 @@ pub fn init_ddoc_project(dir: PathBuf) -> DdResult<()> {
     let init_values = InitValues::guess(&dir)?;
 
     // ddoc.hjson
-    init_hjson_in_dir(&dir, &init_values)?;
+    let config = match init_hjson_in_dir(&dir, &init_values) {
+        Err(DdError::InvalidConfig) => {
+            return Err(DdError::InitNotPossible(
+                "ddoc.hjson already exists but is invalid. Please delete or fix it first"
+                    .to_string(),
+            ));
+        }
+        res => res?,
+    };
 
     // .gitignore
     let gitignore_path = dir.join(".gitignore");
@@ -54,7 +62,7 @@ pub fn init_ddoc_project(dir: PathBuf) -> DdResult<()> {
     }
 
     // src/
-    init_src_in_dir(&dir, &init_values)?;
+    init_src_in_dir(&dir, &init_values, &config)?;
 
     // print some instructions
     eprintln!(

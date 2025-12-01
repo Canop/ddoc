@@ -15,6 +15,9 @@ Any file matching `/src/css/*.css` or `/src/js/*.js` will be served.
 
 Files are included in the HTML's head element in alphabetic order.
 
+The body element holds a page-specific class to help discriminate rules.
+For example, on this site the `<h1>` elements of the [examples](../examples) page have a top border, which is defined with a rule on `body.page-examples h1`.
+
 # Include images
 
 Images have to be stored in `/src/img`.

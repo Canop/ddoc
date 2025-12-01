@@ -2,6 +2,7 @@
 use {
     crate::*,
     rouille::Response,
+    termimad::crossterm::style::Stylize,
 };
 
 pub fn serve_project(
@@ -10,8 +11,12 @@ pub fn serve_project(
 ) -> DdResult<()> {
     let addr = format!("localhost:{port}");
     let static_path = project.build_path.clone();
-    eprintln!("Serving at http://{addr}/");
-    rouille::start_server(addr, move |request| {
+    eprintln!(
+        "Serving {} at {}",
+        project.config.title.to_string().yellow().bold(),
+        format!("http://{addr}/").green().bold(),
+    );
+    let server = rouille::Server::new(addr, move |request| {
         // build the file path
         let mut path = static_path.to_owned();
         path.push(&request.url()[1..]); // Remove leading /
@@ -35,5 +40,8 @@ pub fn serve_project(
 
         // Try to serve the file
         rouille::match_assets(request, &static_path)
-    });
+    })
+    .map_err(|e| DdError::Server(e.to_string()))?;
+    server.run();
+    Ok(())
 }

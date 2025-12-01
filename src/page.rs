@@ -43,12 +43,21 @@ impl Page {
     ) -> DdResult<()> {
         html.push_str(HTML_START);
         let title = format!("{} - {}", &self.title, &project.config.title);
-        writeln!(html, "<title>{}</title>", title)?; // TODO escape HTML
-        writeln!(html, "<meta name=\"og-title\" content=\"{}\">", title,)?;
-        if let Some(description) = &project.config.description {
+        writeln!(html, "<title>{}</title>", escape_text(&title))?;
+        writeln!(
+            html,
+            "<meta name=\"og-title\" content=\"{}\">",
+            escape_attr(&title)
+        )?;
+        if let Some(description) = project.config.description() {
+            let description = escape_attr(description);
             writeln!(html, r#"<meta name="description" content="{description}">"#)?;
+            writeln!(
+                html,
+                r#"<meta name="og-description" content="{description}">"#
+            )?;
         }
-        if let Some(url) = &project.config.favicon {
+        if let Some(url) = project.config.favicon() {
             let url = project.img_url(url, &self.page_path);
             writeln!(html, r#"<link rel="shortcut icon" href="{url}">"#)?;
         }
@@ -89,13 +98,15 @@ impl Page {
                 let img_url = project.img_url(img, &self.page_path);
                 write!(html, "<img src=\"{img_url}\"")?;
                 if let Some(alt) = &link.alt {
-                    write!(html, " alt=\"{alt}\"")?; // TODO escape HTML
-                    write!(html, " title=\"{alt}\"")?; // TODO escape HTML
+                    let alt = escape_attr(alt);
+                    write!(html, " alt=\"{alt}\"")?;
+                    write!(html, " title=\"{alt}\"")?;
                 }
                 html.push('>');
             }
             if let Some(label) = &link.label {
-                write!(html, "<span>{label}</span>")?; // TODO escape HTML
+                let label = escape_text(label);
+                write!(html, "<span>{label}</span>")?;
             }
             html.push_str("</a>\n");
         }
@@ -232,7 +243,7 @@ impl Page {
             return Ok(());
         };
         self.write_html_head(html, project)?;
-        html.push_str("<body>\n");
+        writeln!(html, "<body class=\"page-{}\">\n", &self.page_path.stem)?;
         self.write_html_header(html, project)?; // header with logos & site-nav
         self.write_html_article(html, md, project)?; // page-to & article
         html.push_str("</html>\n");

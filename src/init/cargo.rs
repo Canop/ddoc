@@ -11,6 +11,7 @@ pub struct CargoToml {
 #[derive(Debug, serde::Deserialize)]
 pub struct CargoTomlPackage {
     name: String,
+    description: Option<String>,
     repository: Option<String>,
 }
 
@@ -39,6 +40,9 @@ impl CargoToml {
 
     pub fn project_name(&self) -> &str {
         &self.package.name
+    }
+    pub fn project_description(&self) -> Option<&str> {
+        self.package.description.as_deref()
     }
     pub fn github_repository(&self) -> Option<String> {
         self.package

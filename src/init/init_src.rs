@@ -9,6 +9,7 @@ use {
 pub fn init_src_in_dir(
     dir: &Path,
     init_values: &InitValues,
+    _config: &Config,
 ) -> DdResult<()> {
     // src dir
     let src_dir = dir.join("src");
@@ -51,15 +52,31 @@ pub fn init_src_in_dir(
     let img_dir = src_dir.join("img");
     if !img_dir.exists() {
         fs::create_dir_all(&img_dir)?;
-        fs::write(
-            img_dir.join("github-mark.svg"),
-            include_bytes!("../../resources/src/img/github-mark.svg"),
-        )?;
-        fs::write(
-            img_dir.join("github-mark-white.svg"),
-            include_bytes!("../../resources/src/img/github-mark-white.svg"),
-        )?;
     }
+    // the following images could be written only if the github navlink is used,
+    // but we'd fail people willing to add it later, so we just add them now
+    write_image_if_not_exists(
+        &img_dir,
+        "github-mark-white.svg",
+        include_bytes!("../../resources/src/img/github-mark-white.svg"),
+    )?;
+    write_image_if_not_exists(
+        &img_dir,
+        "github-mark.svg",
+        include_bytes!("../../resources/src/img/github-mark.svg"),
+    )?;
 
+    Ok(())
+}
+
+fn write_image_if_not_exists(
+    img_dir: &Path,
+    filename: &str,
+    data: &[u8],
+) -> DdResult<()> {
+    let img_path = img_dir.join(filename);
+    if !img_path.exists() {
+        fs::write(&img_path, data)?;
+    }
     Ok(())
 }

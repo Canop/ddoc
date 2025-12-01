@@ -1,6 +1,6 @@
 
 title: "ddoc"
-description: ""
+description: "Markdown based static site generator"
 favicon: img/favicon.ico
 
 pages: {
@@ -10,7 +10,7 @@ pages: {
         "Setup your site": setup.md
         "Edit your site": edit.md
     }
-    Exemples: exemples.md
+    Examples: examples.md
 }
 
 nav_links: {

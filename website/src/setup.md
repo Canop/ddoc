@@ -41,7 +41,7 @@ Now that you've see the initial, quite void, site, you should [edit it](../edit)
 
 You won't break anything if you run again `ddoc --init`.
 
-Most often it won't do anything.
+If you already have your `src` directory full of markdown files, ddoc will add what's missing.
 
 If you don't have a `ddoc.hjson` file, it will be created.
 
@@ -49,4 +49,7 @@ If you don't have a `src/index.md` file, one will be written.
 
 If you don't have a `src/css` directory, the default `src/css/site.css` file will be written.
 
+If nothing is obviously missing, ddoc won't do anything.
+
 So to restore defaults, remove some part and run `ddoc --init`.
+

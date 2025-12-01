@@ -9,6 +9,7 @@ use {
 #[derive(Debug, Default)]
 pub struct InitValues {
     pub title: Option<String>,
+    pub description: Option<String>,
     pub index: Option<PathBuf>,
     pub github_repo: Option<String>,
 }
@@ -22,6 +23,11 @@ impl InitValues {
         if let Some(cargo_toml) = CargoToml::in_dir(parent_dir) {
             if init_values.title.is_none() {
                 init_values.title = Some(cargo_toml.project_name().to_owned());
+            }
+            if init_values.description.is_none() {
+                if let Some(desc) = cargo_toml.project_description() {
+                    init_values.description = Some(desc.to_owned());
+                }
             }
             if init_values.github_repo.is_none() {
                 init_values.github_repo = cargo_toml.github_repository();

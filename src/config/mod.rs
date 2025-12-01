@@ -32,7 +32,16 @@ pub struct Config {
 impl Config {
     pub fn at_root(path: &Path) -> DdResult<Self> {
         let config_path = path.join("ddoc.hjson");
+        if !config_path.exists() {
+            return Err(DdError::ConfigNotFound);
+        }
         read_file(config_path)
+    }
+    pub fn description(&self) -> Option<&str> {
+        self.description.as_deref().filter(|s| !s.is_empty())
+    }
+    pub fn favicon(&self) -> Option<&str> {
+        self.favicon.as_deref().filter(|s| !s.is_empty())
     }
 }
 
