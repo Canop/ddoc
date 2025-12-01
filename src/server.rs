@@ -17,6 +17,7 @@ pub fn serve_project(
         format!("http://{addr}/").green().bold(),
     );
     let server = rouille::Server::new(addr, move |request| {
+
         // build the file path
         let mut path = static_path.to_owned();
         path.push(&request.url()[1..]); // Remove leading /

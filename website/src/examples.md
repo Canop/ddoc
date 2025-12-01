@@ -9,7 +9,7 @@ See the source at [https://github.com/Canop/ddoc/tree/main/website](https://gith
 
 # bacon
 
-![bacon](img/example-bacon.png)
+![bacon](img/examples/bacon.png)
 
 bacon's website looks a lot like the one of ddoc, except colors don't try to be neutral.
 
@@ -19,7 +19,7 @@ Source: [https://github.com/Canop/bacon/tree/main/website](https://github.com/Ca
 
 # rhit
 
-![rhit](img/example-rhit.png)
+![rhit](img/examples/rhit.png)
 
 This site sports a different layout, with vertical navigation stripes.
 
