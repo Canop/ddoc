@@ -59,6 +59,19 @@ pub fn run() -> DdResult<()> {
     project.build()?;
 
     if args.serve {
+        // we watch for changes and rebuild automatically on a background thread
+        let _watcher = match rebuild_on_change(project_path.clone()) {
+            Ok(w) => Some(w),
+            Err(e) => {
+                eprintln!(
+                    "{} {}",
+                    "Warning: could not start file watcher:".yellow().bold(),
+                    e,
+                );
+                None
+            }
+        };
+        eprintln!("Watching for changes in {:?}", &project_path);
         let port = args.port.unwrap_or(8004);
         serve_project(&project, port)?;
     }

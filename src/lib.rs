@@ -43,6 +43,7 @@ mod page_path;
 mod project;
 mod server;
 mod statics;
+mod watcher;
 
 pub use {
     cli::*,
@@ -56,6 +57,7 @@ pub use {
     project::*,
     server::*,
     statics::*,
+    watcher::*,
 };
 
 #[macro_use]

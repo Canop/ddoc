@@ -1,5 +1,4 @@
 
-
 # ddoc
 
 **Warning: ddoc is very (very very) recent and still considered unstable**
@@ -12,18 +11,17 @@
 
 **ddoc** makes sense when you want a simple site, such as this one, with a site wide navigation menu, a table of content on every page, and you want to be confident the style won't be broken at every release of the tool.
 
-
 ## Why NOT use ddoc
 
 * ddoc assumes you want to write or tune, then own, your CSS, not choose among themes
 * ddoc has less features than any other static site generator
-* this tool is super very new and not battle tested
+* ddoc is very new and might need fixes according to feedback
 
 ## Project Goals
 
 * Be a reliable static site generator for documentation sites
 * Complete and reasonnable navigation (menu, TOC, links)
-* Avoid breaks among versions - no imported CSS or layout related HTML
+* Avoid breaks among versions - no imported CSS
 * Support images, tables, code sections, links, etc.
 * Cross-platform and easy to install - a single binary with no dependencies
 * Clean URL paths, no history shenanigans, obvious links

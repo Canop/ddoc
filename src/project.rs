@@ -47,6 +47,11 @@ impl Project {
         }
         Ok(())
     }
+    pub fn load_and_build(path: &Path) -> DdResult<()> {
+        let project = Self::load(path)?;
+        project.build()?;
+        Ok(())
+    }
     pub fn list_js(&self) -> DdResult<Vec<StaticEntry>> {
         let static_src = self.src_path.join("js");
         StaticEntry::list_in(&static_src, Some(".js"))

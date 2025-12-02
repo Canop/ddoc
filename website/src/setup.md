@@ -5,8 +5,6 @@ Create a directory, then move to it
 
     mkdir website & cd website
 
-"website" is a reasonnable name for the documentation part of a project.
-
 Initialize the site:
 
     ddoc --init
@@ -19,7 +17,7 @@ This creates:
 
 `/src/css/site.css` is a default CSS file, a very simple one which you can remove, or keep as basis for your own incremental changes to get the layout and look you desire.
 
-Sometimes, the content of the initial `src/index.md` file, or some properties of the `ddoc.hjson` config will be guessed from the parent directory.
+**ddoc** tries to guess relevant properties (eg the name of the site) from the parent directory, in order to fill the initial `src/index.md` file and the `ddoc.hjson` config file.
 
 # Build the site
 
@@ -33,7 +31,7 @@ If you want to test it locally, you may run
 
     ddoc --serve
 
-**Note:** The current version of ddoc doesn't rebuild the site on file changes. So `ddoc --serve` is best used combined with a watcher, eg [bacon](https://dystroy.org/bacon).
+**ddoc** rebuilds the site on changes but the page isn't automatically reloaded (the site is served without injected script, exactly as you'll use it in production), so you'll have to refresh the page in the browser to see the change.
 
 Now that you've see the initial, quite void, site, you should [edit it](../edit).
 

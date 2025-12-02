@@ -3,7 +3,7 @@ By looking at those sites and their sources, you may better see what's possible 
 
 # ddoc
 
-Of course ddoc's documentation, the present site, is made with ddoc.
+Of course this site is made with ddoc.
 
 See the source at [https://github.com/Canop/ddoc/tree/main/website](https://github.com/Canop/ddoc/tree/main/website)
 
