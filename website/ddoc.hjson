@@ -21,6 +21,12 @@ nav_links: {
             alt: dystroy.org homepage
             class: external-nav-link
         }
+        {
+            url: /index.md
+            alt: ddoc homepage
+            label: ddoc
+            class: home-link
+        }
     ]
     after_menu: [
         {

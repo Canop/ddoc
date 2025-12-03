@@ -4,12 +4,12 @@
 	--text: #444;
 	--accent: #ffd700;
 	--bg: #fdfdfd;
-	--nav-bg: linear-gradient(#444,#222);
+	--nav-bgi: linear-gradient(#444,#222);
 	--nav-fg: #fff;
 	--link-fg: #000;
 	--code-fg: #111;
 	--code-bg: #ddd;
-	--hovered-menu-bg: linear-gradient(#444, var(--accent));
+	--hovered-menu-bgi: linear-gradient(#666, #444);
 }
 
 html, body, div, nav, header {
@@ -39,7 +39,7 @@ nav li {
 kbd {
 	padding: 2px 4px;
 	color: var(--accent);
-	background: var(--nav-bg);
+	background: var(--nav-bgi);
 	border-radius: 2px;
 	box-shadow: none;
 	font-weight: bold;
@@ -65,8 +65,11 @@ nav a {
 /* Top navigation bar */
 
 @media (max-width: 768px) { /* mobile */
+	body:has(#nav-toggle:checked) {
+		overflow-y: hidden; /* prevent scrolling when menu is open */
+	}
 	ul.nav-menu {
-		background: var(--nav-bg);
+		background: var(--nav-bgi);
 		color: var(--nav-fg);
 		width: 100%;
 		flex-direction: column;
@@ -84,6 +87,8 @@ nav a {
 		transform: translateY(-10px);
 		transition: all 0.3s ease;
 		flex-direction: column;
+		overflow-y: auto;
+		max-height: calc(100vh - 42px);
 	}
 	#nav-toggle {
 		display: none; /* hide checkbox */
@@ -127,6 +132,10 @@ nav a {
 		flex-direction: row;
 		align-items: center;
 	}
+	nav.site-nav .nav-item:has(.selected) > a {
+		background-image: var(--hovered-menu-bgi);
+		color: var(--accent);
+	}
 }
 
 header {
@@ -138,10 +147,14 @@ header {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	background: var(--nav-bg);
+	background: var(--nav-bgi);
 	border-bottom: 1px solid var(--accent);
 	justify-content: space-between;
 	color: var(--nav-fg);
+}
+header .nav-link.home-link span {
+	margin: 0 20px 0 10px;
+	font-weight: bold;
 }
 nav.before-menu, nav.after-menu {
 	flex: 1 1 10%;
@@ -166,10 +179,10 @@ nav.site-nav > ul.nav-menu {
 }
 
 nav.site-nav a:hover {
-	background-image: linear-gradient(#111,#162020);
+	background-image: var(--hovered-menu-bgi);
 }
-nav.site-nav .selected a, nav.site-nav .nav-item:has(.selected) > a {
-	background-image: linear-gradient(#111,#162020);
+nav.site-nav .selected > a {
+	background-image: var(--hovered-menu-bgi);
 	color: var(--accent);
 }
 
@@ -193,7 +206,7 @@ nav.site-nav .selected a, nav.site-nav .nav-item:has(.selected) > a {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: stretch;
-	background: var(--nav-bg);
+	background: var(--nav-bgi);
 }
 .nav-item:hover .nav-menu .nav-item {
 	flex: 0 0 auto;
@@ -202,7 +215,7 @@ nav.site-nav .selected a, nav.site-nav .nav-item:has(.selected) > a {
 	padding: 8px 24px 8px 12px;
 }
 .nav-item .nav-menu .nav-item a:hover {
-	background-image: linear-gradient(#111,#162020);
+	background-image: var(--hovered-menu-bgi);
 	color: var(--accent);
 }
 
@@ -240,11 +253,30 @@ nav.site-nav .selected a, nav.site-nav .nav-item:has(.selected) > a {
 /* article layout */
 
 @media (max-width: 768px) { /* mobile */
-	aside.page-nav { /* hide TOC on small screens */
+	aside.page-nav {
+		/* display: none; */ /* uncomment to hide side nav on small screens */
+	}
+	nav.page-toc {
+	}
+	nav.page-toc ul.toc-content { /* hide TOC on small screens */
 		display: none;
 	}
+	article nav.page-toc a.toc-title { /* still show page name */
+		margin-top: 40px;
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 10px;
+		padding: 10px 0;
+		background: var(--nav-bgi);
+		display: flex;
+		justify-content: center;
+		flex-direction: row;
+		align-items: center;
+		color: var(--nav-fg);
+		font-size: 16px;
+	}
 	main {
-		margin: 100px 20px 40px 20px;
+		margin: 10px 20px 40px 20px;
 	}
 }
 @media (min-width: 768px) { /* wide screens */
@@ -262,7 +294,7 @@ nav.site-nav .selected a, nav.site-nav .nav-item:has(.selected) > a {
 	}
 	main {
 		flex: 0 0 75%;
-		max-width: 75%;
+		min-width: 0;
 	}
 }
 
@@ -282,7 +314,7 @@ nav.page-toc a.toc-title {
 	color: var(--text);
 }
 nav.page-toc .toc-content {
-	background: var(--nav-bg);
+	background: var(--nav-bgi);
 	padding-top: 10px;
 	padding-bottom: 10px;
 	border-radius: 5px;
@@ -293,7 +325,7 @@ nav.page-toc .toc-content {
 }
 
 nav.page-toc .toc-item:hover {
-	background: #222;
+	background-image: var(--hovered-menu-bgi);
 }
 nav.page-toc a {
 	display: inline-block;

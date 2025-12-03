@@ -35,7 +35,7 @@
 
 ## Possible future goals
 
-* Search
+* Search - not having one is a significant problem for some big documentations
 * Automated "list" pages - to make ddoc suitable for blogs, albums, etc.
 * Image processing
 * Syntax highlighting in code
