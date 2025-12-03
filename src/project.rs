@@ -187,9 +187,9 @@ fn copy_normal_recursive(
     dst_dir: &Path,
 ) -> DdResult<()> {
     if !dst_dir.exists() {
-        fs::create_dir_all(&dst_dir)?;
+        fs::create_dir_all(dst_dir)?;
     }
-    for entry in fs::read_dir(&src_dir)? {
+    for entry in fs::read_dir(src_dir)? {
         let entry = entry?;
         let file_type = entry.file_type()?;
         if file_type.is_dir() {

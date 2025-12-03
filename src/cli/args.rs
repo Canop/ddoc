@@ -7,7 +7,9 @@ use {
 };
 
 static INTRO: &str = "
-ddoc is a web documentation generator from markdown files.
+ddoc is a markdown based static site generator.
+
+Documentation at https://dystroy.org/ddoc
 
 ";
 
