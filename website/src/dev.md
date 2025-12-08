@@ -15,5 +15,5 @@ Don't hesitate to come if you have a question.
 
 We use the [GitHub's issue manager](https://github.com/Canop/ddoc/issues).
 
-Before posting a new issue, check your problem hasn't already been raised and in case of doubt **please come first discuss it on the chat**.
+Before posting a new issue, check that your problem hasn't already been raised and in case of doubt **please come first discuss it on the chat**.
 

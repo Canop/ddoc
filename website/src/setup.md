@@ -3,7 +3,7 @@
 
 Create a directory, then move to it
 
-    mkdir website & cd website
+    mkdir website && cd website
 
 Initialize the site:
 
@@ -31,9 +31,9 @@ If you want to test it locally, you may run
 
     ddoc --serve
 
-**ddoc** rebuilds the site on changes but the page isn't automatically reloaded (the site is served without additional script, exactly as you'll use it in production), so you'll have to refresh the page in the browser to see the change.
+**ddoc** rebuilds the site on changes but the page won't be automatically reloaded (the site is served without additional script, exactly as you'll later use it in production), so you'll have to refresh the page in the browser to see the change.
 
-Now that you've see the initial, quite void, site, you should [edit it](../edit).
+Now that you've seen the initial, quite void, site, you should [edit it](../edit).
 
 # Restore some defaults
 

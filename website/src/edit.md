@@ -62,7 +62,7 @@ will be rewritten to be relative to the current page depending on its depth.
 
 Some special values are dynamically expanded:
 
-- `--previous-page` links to the prevous page according to the order defined by the page's list
+- `--previous-page` links to the previous page according to the order defined by the pages list
 - `--next-page` links to the next page
 - `--search` opens the search dialog (and its presence triggers the inclusion of a search script)
 
