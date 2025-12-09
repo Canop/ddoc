@@ -1,3 +1,10 @@
+/* this file contains custom styles for the ddoc site,
+ * you probably don't wabt to take them for your own site
+ */
+
+body.page-index footer {
+    display: none;
+}
 body.page-examples h1 {
     border-top: 1px solid #ddd;
     padding-top: 14px;
@@ -13,4 +20,21 @@ body.page-examples main img {
     body.page-examples main img {
         max-width: 400px;
     }
+}
+footer .made-with-ddoc {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	padding: 50px 0 20px 0;
+}
+footer nav.made-with-ddoc a.nav-link, footer nav.made-with-ddoc a.nav-link:hover {
+	color: var(--text);
+	opacity: 0.4;
+}
+footer nav.made-with-ddoc a.nav-link.link-to-ddoc {
+	font-weight: bold;
+}
+footer nav.made-with-ddoc a.nav-link.link-to-ddoc:hover {
+	opacity: 0.8;
+	text-decoration: underline;
 }

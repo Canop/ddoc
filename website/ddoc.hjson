@@ -60,12 +60,14 @@ header: {
     ]
 }
 footer: {
-    // this is an example, we don't really want to show it, hence
-    // the 'hidden' class
-    hidden: [
+    made-with-ddoc: [
         {
-            label: made with ddoc
+            label: made with
+        }
+        {
+            label: ddoc
             href: https://dystroy.org/ddoc
+            class: link-to-ddoc
         }
     ]
 }

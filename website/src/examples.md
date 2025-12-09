@@ -11,7 +11,7 @@ See the source at [https://github.com/Canop/ddoc/tree/main/website](https://gith
 
 ![bacon](img/examples/bacon.png)
 
-bacon's website looks a lot like the one of ddoc, except colors don't try to be neutral.
+bacon's website looks a lot like the one of ddoc, with different colors but the same layout.
 
 website: [https://dystroy.org/bacon](https://dystroy.org/bacon)
 
@@ -23,8 +23,7 @@ Source: [https://github.com/Canop/bacon/tree/main/website](https://github.com/Ca
 
 broot's website is similar to ddoc's too, but shows how a bigger documentation fits ddoc without problem.
 
-To support tabs wrapping configuration snippets, a small script is injected.
-You can consult it in `/website/src/js`.
+To support tabs wrapping configuration snippets, [a small script](https://github.com/Canop/broot/blob/main/website/src/js/tab-langs.js) is injected with matching [stylesheet](https://github.com/Canop/broot/blob/main/website/src/css/tab-langs.css).
 
 website: [https://dystroy.org/broot](https://dystroy.org/broot)
 
