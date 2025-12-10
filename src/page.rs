@@ -147,7 +147,10 @@ impl Page {
                         html.push_str("</nav>\n");
                     }
                     NavComponent::Menu(_) => {
-                        project.config.menu.push_nav(html, project, class_name, &self.page_path)?;
+                        project
+                            .config
+                            .menu
+                            .push_nav(html, project, class_name, &self.page_path)?;
                     }
                 }
             }
