@@ -121,6 +121,24 @@ impl PagePath {
     pub fn is_root_index(&self) -> bool {
         self.dir.is_empty() && self.stem == "index"
     }
+    pub fn to_absolute_url(
+        &self,
+        base_url: &str,
+    ) -> String {
+        let mut url = base_url.to_owned();
+        if !url.ends_with('/') {
+            url.push('/');
+        }
+        for d in &self.dir {
+            url.push_str(d);
+            url.push('/');
+        }
+        if self.stem != "index" {
+            url.push_str(&self.stem);
+            url.push('/');
+        }
+        url
+    }
     /// Returns a relative link from this `PagePath` to another `PagePath`
     pub fn link_to(
         &self,

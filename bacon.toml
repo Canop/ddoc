@@ -9,6 +9,7 @@
 
 default_job = "check"
 env.CARGO_TERM_COLOR = "always"
+env.DDOC_LOG = "debug"
 
 [jobs.check]
 command = ["cargo", "check"]

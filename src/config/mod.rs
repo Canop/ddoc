@@ -16,8 +16,13 @@ use {
         Deserialize,
         Serialize,
     },
-    std::path::Path,
+    std::path::{
+        Path,
+        PathBuf,
+    },
 };
+
+pub static CONFIG_FILE_NAME: &str = "ddoc.hjson";
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config {
@@ -38,15 +43,18 @@ pub struct Config {
 impl Config {
     /// Read the ddoc.hjson configuration file at the root of a ddoc project
     ///
+    /// Return both the config and the path where it was found
+    ///
     /// # Errors
     /// Return `DdError::ConfigNotFound` if no ddoc.hjson is found at the specified path
     /// or other `DdError` variants on read/parse errors
-    pub fn at_root(path: &Path) -> DdResult<Self> {
-        let config_path = path.join("ddoc.hjson");
+    pub fn at_root(path: &Path) -> DdResult<(Self, PathBuf)> {
+        let config_path = path.join(CONFIG_FILE_NAME);
         if !config_path.exists() {
             return Err(DdError::ConfigNotFound);
         }
-        read_file(config_path)
+        let config: Config = read_file(&config_path)?;
+        Ok((config, config_path))
     }
     pub fn description(&self) -> Option<&str> {
         self.description.as_deref().filter(|s| !s.is_empty())

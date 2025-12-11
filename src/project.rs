@@ -17,20 +17,24 @@ use {
 pub struct Project {
     pub root: PathBuf,
     pub config: Config,
+    pub config_path: PathBuf,
     pub pages: FxHashMap<PagePath, Page>,
     pub src_path: PathBuf,
     pub build_path: PathBuf,
 }
 
 impl Project {
+    /// Given the path to a ddoc project root,
+    /// load its configuration and pages into a `Project` struct.
     pub fn load(path: &Path) -> DdResult<Self> {
-        let config = Config::at_root(path)?;
+        let (config, config_path) = Config::at_root(path)?;
         let src_path = path.join("src");
         let pages = FxHashMap::default();
         let build_path = path.join("site");
         let nav = config.menu.clone();
         let mut project = Self {
             config,
+            config_path,
             root: path.to_owned(),
             pages,
             src_path: src_path.clone(),
@@ -39,6 +43,9 @@ impl Project {
         nav.add_pages(&mut project);
         Ok(project)
     }
+    /// Fills the 'site' directory with the generated HTML files and static files
+    ///
+    /// Don't do any prealable cleaning, call `clean_build_dir` first if needed.
     pub fn build(&self) -> DdResult<()> {
         self.copy_static("img")?;
         self.copy_static("js")?;
@@ -60,6 +67,90 @@ impl Project {
         }
         Ok(())
     }
+    /// Try to update the project. Return true when some real work was done.
+    ///
+    /// #Errors
+    /// Doesn't return error on user/data problems. A missing file, or
+    /// an invalid config file will only trigger printed messages, not errors.
+    pub fn update(
+        &mut self,
+        change: FileChange,
+        base_url: &str, // for informing the user on the link to look at
+    ) -> DdResult<bool> {
+        match change {
+            FileChange::Other => {
+                self.reload_and_rebuild(base_url)?;
+                return Ok(true);
+            }
+            FileChange::Removal(touched_path) => {
+                // we care only if it's a CSS or JS file (header may have changed)
+                if let Ok(rel_path) = touched_path.strip_prefix(&self.src_path) {
+                    if rel_path.starts_with("css/") || rel_path.starts_with("js/") {
+                        self.reload_and_rebuild(base_url)?;
+                        return Ok(true);
+                    }
+                }
+            }
+            FileChange::Write(touched_path) => {
+                // partial update for /src/img/ files and /src/*.md files
+                if let Ok(rel_path) = touched_path.strip_prefix(&self.src_path) {
+                    let ext = rel_path.extension().and_then(|s| s.to_str());
+                    if ext == Some("md") {
+                        for (page_path, page) in &self.pages {
+                            if page.md_file_path == touched_path {
+                                info!("Modified page {:?}", page_path);
+                                let url = page_path.to_absolute_url(base_url);
+                                eprintln!("Modified {}", url.yellow());
+                                self.build_page(page_path)?;
+                                return Ok(true);
+                            }
+                        }
+                        return Ok(false); // might be a readme, etc.
+                    }
+                    if let Ok(rel_img) = rel_path.strip_prefix("img/") {
+                        info!("Deployed image {:?}", rel_img);
+                        eprintln!("Deployed image {}", rel_img.to_string_lossy().yellow());
+                        let dst_path = self.build_path.join("img").join(rel_img);
+                        if let Some(parent) = dst_path.parent() {
+                            fs::create_dir_all(parent)?;
+                        }
+                        fs::copy(&touched_path, &dst_path)?;
+                        return Ok(true);
+                    }
+                }
+                // If the change is related to the config file, a JS or CSS file,
+                // then we have to do a full rebuild (all headers may have changed).
+                // For JS & CSS we could do it only if the file is new or renamed,
+                //  but for now we do a full rebuild).
+                self.reload_and_rebuild(base_url)?;
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+    fn reload_and_rebuild(
+        &mut self,
+        base_url: &str, // for informing the user on the link to look at
+    ) -> DdResult<()> {
+        info!("full rebuild");
+        eprintln!("full rebuild of {}", base_url.yellow());
+        self.config = {
+            let Ok(new_config) = read_file::<Config, _>(&self.config_path) else {
+                eprintln!(
+                    "{}: could not read updated config file at {:?}, keeping the old one.",
+                    "warning".yellow().bold(),
+                    &self.config_path
+                );
+                return Ok(());
+            };
+            new_config
+        };
+        self.pages.clear();
+        let nav = self.config.menu.clone();
+        nav.add_pages(self);
+        self.build()?;
+        Ok(())
+    }
     /// remove the 'build' directory and its content
     pub fn clean_build_dir(&self) -> DdResult<()> {
         if self.build_path.exists() {
@@ -71,6 +162,19 @@ impl Project {
         let project = Self::load(path)?;
         project.build()?;
         Ok(())
+    }
+    /// If the provided path corresponds to a page in the project,
+    /// return its `PagePath`, else return `None`.
+    pub fn page_path_of(
+        &self,
+        path: &Path,
+    ) -> Option<&PagePath> {
+        for (page_path, page) in &self.pages {
+            if page.md_file_path == path {
+                return Some(page_path);
+            }
+        }
+        None
     }
     pub fn list_js(&self) -> DdResult<Vec<StaticEntry>> {
         let static_src = self.src_path.join("js");

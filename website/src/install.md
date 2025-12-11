@@ -7,7 +7,6 @@ Then run
 
     cargo install ddoc --locked
 
-
 # Install from sources
 
 You need to have the Rust environment installed: [https://rustup.rs](https://rustup.rs)
@@ -27,3 +26,4 @@ Compile and install:
 # Then...
 
 [Setup your site](../setup)
+

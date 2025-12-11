@@ -86,10 +86,18 @@ pub fn run() -> DdResult<()> {
     );
 
     if args.serve {
+        let port = args.port.unwrap_or(8004);
+        let server = Server::new(project.build_path.clone(), port)?;
+        eprintln!(
+            "Serving {} at {}",
+            project.config.title.clone().yellow().bold(),
+            server.base_url().green().bold(),
+        );
+
         // we watch for changes and rebuild automatically on a background thread
-        let _watcher = match rebuild_on_change(project_path.clone()) {
+        let _watcher = match rebuild_on_change(project, server.base_url().to_string()) {
             Ok(w) => {
-                eprintln!(
+                info!(
                     "Watching for changes in {}",
                     project_path.to_string_lossy().yellow()
                 );
@@ -105,8 +113,8 @@ pub fn run() -> DdResult<()> {
                 None
             }
         };
-        let port = args.port.unwrap_or(8004);
-        serve_project(&project, port)?;
+
+        server.run()?;
     }
 
     Ok(())

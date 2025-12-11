@@ -21,7 +21,7 @@ You should also not have to deal with huge imported theming CSS files full of `!
 
 Summarizing the goals and features of **ddoc**:
 
-* Be a reliable static site generator for documentation sites
+* A reliable static site generator for documentation sites
 * Complete and reasonable navigation (menu, TOC, links, search)
 * Avoid breaks among versions - no imported CSS
 * Support images, tables, code sections, links, etc.
@@ -29,6 +29,7 @@ Summarizing the goals and features of **ddoc**:
 * Clean URL paths, no history shenanigans, obvious links
 * Generated HTML is easy to style with CSS
 * All internal links are relative, ddoc doesn't need to know the base url of the site
+* Integrated search function - but you can replace it with your own
 
 ## Why NOT use ddoc
 
