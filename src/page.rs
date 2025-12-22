@@ -207,7 +207,16 @@ impl Page {
                     let mut j = i + 1;
                     while j < events.len() {
                         match &events[j] {
+                            Event::Code(code) => {
+                                if !heading_text.is_empty() {
+                                    heading_text.push(' ');
+                                }
+                                heading_text.push_str(code);
+                            }
                             Event::Text(text) => {
+                                if !heading_text.is_empty() {
+                                    heading_text.push(' ');
+                                }
                                 heading_text.push_str(text);
                             }
                             Event::End(TagEnd::Heading(_)) => {
