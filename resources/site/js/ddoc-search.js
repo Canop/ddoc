@@ -279,10 +279,16 @@ function open_search_panel() {
     });
 }
 
+// Append or set a query parameter to a URL (which may be relative and contain '..')
 function append_param(href, key, value) {
-    let url = new URL(href, window.location.origin);
-    url.searchParams.set(key, value);
-    return url.toString();
+    let parts = href.split('#');
+    if (parts[0].includes('?')) {
+        parts[0] += '&';
+    } else {
+        parts[0] += '?';
+    }
+    parts[0] += `${key}=${encodeURIComponent(value)}`;
+    return parts.join('#');
 }
 
 async function open(options = {}) {
