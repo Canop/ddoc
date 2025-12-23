@@ -98,6 +98,7 @@ command = [
     "--serve",
     "website"
 ]
+watch = ["resources"]
 need_stdout = true
 need_stderr = true
 allow_warnings = true

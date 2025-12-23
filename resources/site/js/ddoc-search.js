@@ -27,6 +27,7 @@ function close() {
     }
 }
 
+// Add a page to search
 async function add_doc(name, href) {
     let already_added = docs.find(doc => doc.href === href);
     if (already_added) {
@@ -116,6 +117,94 @@ function search_docs({pattern}) {
     return matches;
 }
 
+function highlight_if_needed() {
+    const url = new URL(window.location);
+    const pattern = url.searchParams.get('search');
+    if (pattern) {
+        highlight_matches({pattern});
+        // we clean the URL to avoid re-highlighting on reload
+        url.searchParams.delete('search');
+        window.history.replaceState({}, document.title, url.toString());
+    }
+}
+
+// wrap matches with <mark> in the current page
+function highlight_matches({pattern}) {
+    let regex = RegExp(`\\b${pattern}`, 'ig');
+    let content = document.body.querySelectorAll(content_selector);
+    for (let container of content) {
+        highlight_matches_in_element(regex, container);
+    }
+}
+function highlight_matches_in_element(regex, element) {
+    // Walk through all text nodes
+    const walker = document.createTreeWalker(
+        element,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                const parent = node.parentElement;
+                if (parent.tagName === 'SCRIPT' ||
+                    parent.tagName === 'STYLE' ||
+                    parent.tagName === 'HEADER' ||
+                    parent.tagName === 'FOOTER' ||
+                    parent.tagName === 'MARK'
+                ) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        }
+    );
+
+    const textNodes = [];
+    let currentNode;
+
+    // Collect all text nodes first (to avoid modifying during traversal)
+    while (currentNode = walker.nextNode()) {
+        textNodes.push(currentNode);
+    }
+
+    // Process each text node
+    textNodes.forEach(node => {
+        const text = node.textContent;
+        const matches = [...text.matchAll(regex)];
+        if (matches.length === 0) return;
+
+        const fragment = document.createDocumentFragment();
+        let lastIndex = 0;
+
+        matches.forEach(match => {
+            const matchStart = match.index;
+            const matchEnd = matchStart + match[0].length;
+
+            // Add text before match
+            if (matchStart > lastIndex) {
+                fragment.appendChild(
+                    document.createTextNode(text.slice(lastIndex, matchStart))
+                );
+            }
+
+            // Add highlighted match
+            const mark = document.createElement('mark');
+            mark.textContent = match[0];
+            fragment.appendChild(mark);
+
+            lastIndex = matchEnd;
+        });
+
+        // Add remaining text after last match
+        if (lastIndex < text.length) {
+            fragment.appendChild(
+                document.createTextNode(text.slice(lastIndex))
+            );
+        }
+
+        // Replace original text node with fragment
+        node.parentNode.replaceChild(fragment, node);
+    });
+}
+
 function open_search_panel() {
     let wrapper = document.createElement('div');
     wrapper.className = 'ddoc-search-panel-wrapper';
@@ -164,6 +253,7 @@ function open_search_panel() {
             path.className = 'ddoc-search-result-path';
             let page_link = document.createElement('a');
             page_link.href = match.href.split('#')[0];
+            page_link.href = append_param(page_link.href, 'search', pattern);
             path.addEventListener('click', close);
             page_link.textContent = match.page;
             path.appendChild(page_link);
@@ -173,7 +263,7 @@ function open_search_panel() {
                 sep.className = 'ddoc-search-result-sep';
                 path.appendChild(sep);
                 let section_link = document.createElement('a');
-                section_link.href = match.href;
+                section_link.href = append_param(match.href, 'search', pattern);
                 section_link.textContent = match.section;
                 path.appendChild(section_link);
             }
@@ -187,6 +277,12 @@ function open_search_panel() {
             results.appendChild(item);
         }
     });
+}
+
+function append_param(href, key, value) {
+    let url = new URL(href, window.location.origin);
+    url.searchParams.set(key, value);
+    return url.toString();
 }
 
 async function open(options = {}) {
@@ -219,6 +315,8 @@ return {
     prepare,
     add_menu_docs,
     close,
+    highlight_matches,
+    highlight_if_needed,
 };
 
 })();
@@ -228,4 +326,5 @@ window.addEventListener("load", (event) => {
         menu_selector: ".nav-menu",
         content_selector: "main",
     });
+    ddoc_search.highlight_if_needed();
 });
