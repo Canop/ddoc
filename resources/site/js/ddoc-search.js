@@ -19,6 +19,7 @@ const tag_score = {
 };
 let panel_wrapper = null;
 let content_selector = 'main';
+let selection_index = -1;
 
 function close() {
     if (panel_wrapper) {
@@ -233,8 +234,10 @@ function open_search_panel() {
     document.body.appendChild(wrapper);
     panel_wrapper = wrapper;
     input.focus();
+    // update search results on input
     input.addEventListener('input', function(event) {
         results.innerHTML = '';
+        selection_index = -1;
         let pattern = input.value.trim();
         if (pattern.length === 0) {
             return;
@@ -275,6 +278,51 @@ function open_search_panel() {
                 item.appendChild(extract);
             }
             results.appendChild(item);
+        }
+    });
+    // handle keyboard navigation: up/down + enter
+    input.addEventListener('keydown', function(event) {
+        let items = results.querySelectorAll('.ddoc-search-result');
+        if (event.key === 'ArrowDown') {
+            // down
+            if (items.length === 0) return;
+            selection_index++;
+            if (selection_index >= items.length) {
+                selection_index = 0;
+            }
+            items.forEach((item, idx) => {
+                if (idx === selection_index) {
+                    item.classList.add('ddoc-search-result-selected');
+                    item.scrollIntoView({block: 'nearest'});
+                } else {
+                    item.classList.remove('ddoc-search-result-selected');
+                }
+            });
+            event.preventDefault();
+        } else if (event.key === 'ArrowUp') {
+            // up
+            if (items.length === 0) return;
+            selection_index--;
+            if (selection_index < 0) {
+                selection_index = items.length - 1;
+            }
+            items.forEach((item, idx) => {
+                if (idx === selection_index) {
+                    item.classList.add('ddoc-search-result-selected');
+                    item.scrollIntoView({block: 'nearest'});
+                } else {
+                    item.classList.remove('ddoc-search-result-selected');
+                }
+            });
+            event.preventDefault();
+        } else if (event.key === 'Enter') {
+            // enter
+            if (selection_index >= 0 && selection_index < items.length) {
+                let link = items[selection_index].querySelector('a');
+                if (link) {
+                    window.location.href = link.href;
+                }
+            }
         }
     });
 }
