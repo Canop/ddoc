@@ -15,6 +15,54 @@ pages: {
     }
 }
 
+body: [
+    header: [
+        div.before-menu: [
+            link: {
+                img: img/dystroy-rust-white.svg
+                href: https://dystroy.org
+                alt: dystroy.org homepage
+                class: external-nav-link
+            }
+            link: {
+                url: /index.md
+                alt: ddoc homepage
+                label: ddoc
+                class: home-link
+            }
+        ]
+        menu: {
+            hamburger_checkbox: true
+        }
+        div.after-menu: [
+            link {   
+                img: img/ddoc-left-arrow.svg
+                href: --previous
+                class: previous-page-link
+                alt: Previous Page
+            }
+            {
+                img: img/ddoc-search.svg
+                href: --search
+                class: search-opener
+                alt: Search
+            }
+            {
+                img: img/ddoc-right-arrow.svg
+                href: --next
+                class: next-page-link
+                alt: Next Page
+            }
+            {
+                img: img/github-mark-white.svg
+                class: external-nav-link
+                alt: GitHub
+                href: https://github.com/Canop/ddoc
+            }
+        ]
+    ]
+]
+
 header: {
     before-menu: [
         {

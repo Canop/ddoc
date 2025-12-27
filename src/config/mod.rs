@@ -1,9 +1,13 @@
+mod composite_element;
+mod element;
 mod menu_config;
 mod menu_insert;
 mod nav_component;
 mod nav_link;
 
 pub use {
+    composite_element::*,
+    element::*,
     menu_config::*,
     menu_insert::*,
     nav_component::*,
