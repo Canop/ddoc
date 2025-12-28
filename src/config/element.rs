@@ -1,9 +1,7 @@
 use {
     crate::*,
     indexmap::IndexMap,
-    serde::{
-        Deserialize,
-    },
+    serde::Deserialize,
 };
 
 pub type AttributeKey = String;
@@ -29,11 +27,13 @@ impl AttributeValue {
     }
 }
 
+pub type Attributes = IndexMap<AttributeKey, AttributeValue>;
+
 #[derive(Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum Element {
     Composite(CompositeElement),
-    Attributes(IndexMap<AttributeKey, AttributeValue>),
+    Attributes(Attributes),
 }
 
 impl Element {

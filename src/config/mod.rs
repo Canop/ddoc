@@ -5,6 +5,7 @@ mod menu;
 mod menu_insert;
 mod nav_component;
 mod nav_link;
+mod v2;
 
 pub use {
     composite_element::*,

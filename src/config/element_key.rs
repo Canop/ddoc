@@ -1,8 +1,6 @@
 use {
     crate::*,
-    serde::{
-        Deserialize,
-    },
+    serde::Deserialize,
     std::{
         borrow::Cow,
         cmp::Ordering,
@@ -28,7 +26,10 @@ pub enum ElementType {
 }
 
 impl fmt::Display for ElementKey {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(
+        &self,
+        f: &mut fmt::Formatter,
+    ) -> fmt::Result {
         match &self.etype {
             ElementType::HtmlTag(tag) => write!(f, "{}", tag)?,
             ElementType::Menu => write!(f, "ddoc-menu")?,
@@ -62,9 +63,7 @@ impl FromStr for ElementKey {
 }
 
 impl<'de> serde::Deserialize<'de> for ElementKey {
-    fn deserialize<D: serde::Deserializer<'de>>(
-        deserializer: D
-    ) -> Result<Self, D::Error> {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let s = String::deserialize(deserializer)?;
         s.parse().map_err(serde::de::Error::custom)
     }

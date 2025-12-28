@@ -1,13 +1,16 @@
-use std::{
-    fmt,
-    str::FromStr,
+use {
+    crate::*,
+    std::{
+        fmt,
+        str::FromStr,
+    },
 };
 
 /// A placeholder to insert the menu at this position in the nav bar
-///
-/// Rigth now there's no configuration but it could be extended in the future
 #[derive(Debug, Clone, Copy)]
-pub struct MenuInsert;
+pub struct MenuInsert {
+    pub hamburger_checkbox: bool,
+}
 
 impl FromStr for MenuInsert {
     type Err = &'static str;
@@ -15,9 +18,32 @@ impl FromStr for MenuInsert {
         if s != "menu" {
             return Err("MenuInsert must be 'menu'");
         }
-        Ok(Self)
+        Ok(Self {
+            hamburger_checkbox: true,
+        })
     }
 }
+
+impl Default for MenuInsert {
+    fn default() -> Self {
+        Self {
+            hamburger_checkbox: true,
+        }
+    }
+}
+
+impl From<Attributes> for MenuInsert {
+    fn from(map: Attributes) -> Self {
+        let mut menu_insert = MenuInsert::default();
+        if let Some(v) = map.get("hamburger_checkbox") {
+            if let Some(b) = v.as_bool() {
+                menu_insert.hamburger_checkbox = b;
+            }
+        }
+        menu_insert
+    }
+}
+
 impl fmt::Display for MenuInsert {
     fn fmt(
         &self,
