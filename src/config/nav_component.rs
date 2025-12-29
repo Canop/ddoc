@@ -7,42 +7,90 @@ use {
     },
 };
 
-pub type ClassName = String;
+/// Deprecated navigation components structure for compatibility with ddoc <= 0.10
+#[derive(Debug, Clone, Deserialize)]
+pub struct NavComponents {
+    #[serde(default)]
+    header: NavDir,
+    #[serde(default)]
+    footer: NavDir,
+    #[serde(default)]
+    ui: UiOptions,
+}
 
-/// Either the header or footer navigation configuration
-/// (could be used elsewhere)
+/// Either the header or footer navigation configuration for ddoc <= 0.10
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(transparent)]
-pub struct NavDir {
-    pub components: IndexMap<ClassName, NavComponent>,
+struct NavDir {
+    components: IndexMap<ClassName, NavComponent>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(untagged)]
-pub enum NavComponent {
-    Menu(MenuInsert),
+enum NavComponent {
+    Menu(Menu),
     NavLinks(Vec<NavLink>),
 }
 
+impl NavComponents {
+    /// Build a CompositeElement from old-style NavComponents, adding the
+    /// parts which were implicit in ddoc <= 0.10
+    pub fn into_body_composite(&self) -> CompositeElement {
+        let mut children = Vec::new();
+        if !self.header.is_empty() {
+            children.push(Element::new_composite(
+                "header",
+                self.header.to_children(&self.ui),
+            ));
+        }
+        children.push(Element::new_composite(
+            "article",
+            vec![
+                Element::new_composite("aside.page-nav", vec![ElementContent::Toc.into()]),
+                ElementContent::Main.into(),
+            ],
+        ));
+        if !self.footer.is_empty() {
+            children.push(Element::new_composite(
+                "footer",
+                self.footer.to_children(&self.ui),
+            ));
+        }
+        CompositeElement { children }
+    }
+}
 impl NavDir {
-    /// Check if any of the nav links has the specified href
-    pub fn has_href(
+    pub fn is_empty(&self) -> bool {
+        self.components.is_empty()
+    }
+    fn to_children(
         &self,
-        href: &str,
-    ) -> bool {
-        for component in self.components.values() {
-            if let NavComponent::NavLinks(links) = component {
-                for link in links {
-                    if link.href.as_deref() == Some(href) {
-                        return true;
+        ui: &UiOptions,
+    ) -> Vec<Element> {
+        let mut children = Vec::new();
+        for (class, comp) in &self.components {
+            match comp {
+                NavComponent::Menu(_) => {
+                    let menu_insert = Menu {
+                        hamburger_checkbox: ui.hamburger_checkbox,
+                    };
+                    children.push(Element {
+                        classes: vec![class.clone()],
+                        content: ElementContent::Menu(menu_insert),
+                    });
+                }
+                NavComponent::NavLinks(links) => {
+                    let mut nav_children = Vec::new();
+                    for link in links {
+                        nav_children.push(ElementContent::Link(link.clone()).into());
                     }
+                    let mut nav = Element::new_composite("nav", nav_children);
+                    nav.classes.push(class.clone());
+                    children.push(nav);
                 }
             }
         }
-        false
-    }
-    pub fn is_empty(&self) -> bool {
-        self.components.is_empty()
+        children
     }
 }
 

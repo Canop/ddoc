@@ -2,7 +2,7 @@ title: "ddoc"
 description: "Markdown based static site generator"
 favicon: img/favicon.ico
 
-pages: {
+site-map: {
     Overview: index.md
     Usage: {
         "Install ddoc": install.md
@@ -17,109 +17,60 @@ pages: {
 
 body: {
     header: {
-        div.before-menu: {
-            link: {
+        nav.before-menu: {
+            ddoc-link.external-nav-link: {
                 img: img/dystroy-rust-white.svg
                 href: https://dystroy.org
                 alt: dystroy.org homepage
-                class: external-nav-link
             }
-            link: {
-                url: /index.md
+            ddoc-link.home-link: {
+                href: /index.md
                 alt: ddoc homepage
                 label: ddoc
-                class: home-link
             }
         }
-        menu: {
+        ddoc-menu: {
             hamburger-checkbox: true
         }
-        div.after-menu: {
-            link: {
+        nav.after-menu: {
+            ddoc-link.previous-page-link: {
                 img: img/ddoc-left-arrow.svg
                 href: --previous
-                class: previous-page-link
                 alt: Previous Page
             }
-            link: {
+            ddoc-link.search-opener: {
                 img: img/ddoc-search.svg
                 href: --search
-                class: search-opener
                 alt: Search
             }
-            link: {
+            ddoc-link.next-page-link: {
                 img: img/ddoc-right-arrow.svg
                 href: --next
-                class: next-page-link
                 alt: Next Page
             }
-            link: {
+            ddoc-link.external-nav-link: {
                 img: img/github-mark-white.svg
-                class: external-nav-link
                 alt: GitHub
                 href: https://github.com/Canop/ddoc
             }
         }
     }
+    article: {
+        aside.page-nav: {
+            ddoc-toc: {}
+        }
+        ddoc-main: {}
+    }
+    footer: {
+        nav.made-with-ddoc: {
+            ddoc-link: {
+                label: made with
+            }
+            ddoc-link: {
+                label: ddoc
+                href: https://dystroy.org/ddoc
+                class: link-to-ddoc
+            }
+        }
+    }
 }
-
-header: {
-    before-menu: [
-        {
-            img: img/dystroy-rust-white.svg
-            href: https://dystroy.org
-            alt: dystroy.org homepage
-            class: external-nav-link
-        }
-        {
-            url: /index.md
-            alt: ddoc homepage
-            label: ddoc
-            class: home-link
-        }
-    ]
-    middle: menu
-    after-menu: [
-        {   
-            img: img/ddoc-left-arrow.svg
-            href: --previous
-            class: previous-page-link
-            alt: Previous Page
-        }
-        {
-            img: img/ddoc-search.svg
-            href: --search
-            class: search-opener
-            alt: Search
-        }
-        {
-            img: img/ddoc-right-arrow.svg
-            href: --next
-            class: next-page-link
-            alt: Next Page
-        }
-        {
-            img: img/github-mark-white.svg
-            class: external-nav-link
-            alt: GitHub
-            href: https://github.com/Canop/ddoc
-        }
-    ]
-}
-footer: {
-    made-with-ddoc: [
-        {
-            label: made with
-        }
-        {
-            label: ddoc
-            href: https://dystroy.org/ddoc
-            class: link-to-ddoc
-        }
-    ]
-}
-
-ui: {
-    hamburger_checkbox: true
-}
-

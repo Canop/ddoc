@@ -1,11 +1,7 @@
 use {
     crate::*,
-    serde::Deserialize,
     std::{
-        borrow::Cow,
-        cmp::Ordering,
         fmt,
-        hash,
         str::FromStr,
     },
 };
@@ -25,18 +21,26 @@ pub enum ElementType {
     Main,
 }
 
+impl fmt::Display for ElementType {
+    fn fmt(
+        &self,
+        f: &mut fmt::Formatter,
+    ) -> fmt::Result {
+        match self {
+            ElementType::HtmlTag(tag) => write!(f, "{}", tag),
+            ElementType::Menu => write!(f, "ddoc-menu"),
+            ElementType::Link => write!(f, "ddoc-link"),
+            ElementType::Toc => write!(f, "ddoc-toc"),
+            ElementType::Main => write!(f, "ddoc-main"),
+        }
+    }
+}
 impl fmt::Display for ElementKey {
     fn fmt(
         &self,
         f: &mut fmt::Formatter,
     ) -> fmt::Result {
-        match &self.etype {
-            ElementType::HtmlTag(tag) => write!(f, "{}", tag)?,
-            ElementType::Menu => write!(f, "ddoc-menu")?,
-            ElementType::Link => write!(f, "ddoc-link")?,
-            ElementType::Toc => write!(f, "ddoc-toc")?,
-            ElementType::Main => write!(f, "ddoc-main")?,
-        }
+        write!(f, "{}", &self.etype)?;
         for class in &self.classes {
             write!(f, ".{}", class)?;
         }

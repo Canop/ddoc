@@ -1,173 +1,68 @@
 use {
     crate::*,
-    indexmap::IndexMap,
-    serde::{
-        Deserialize,
-        Serialize,
+    std::{
+        fmt,
+        str::FromStr,
     },
-    std::fmt::Write,
 };
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-#[serde(untagged)]
-pub enum MenuItem {
-    Page(PagePath),
-    SubMenu(Menu),
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-#[serde(transparent)]
+/// A placeholder to insert the menu at this position in the nav bar
+#[derive(Debug, Clone, Copy)]
 pub struct Menu {
-    pub items: IndexMap<String, MenuItem>,
+    pub hamburger_checkbox: bool,
 }
 
-impl Menu {
-    pub fn first_page_path(&self) -> Option<PagePath> {
-        for item in self.items.values() {
-            match item {
-                MenuItem::Page(path) => {
-                    return Some(path.clone());
-                }
-                MenuItem::SubMenu(submenu) => {
-                    if let Some(path) = submenu.first_page_path() {
-                        return Some(path);
-                    }
-                }
-            }
+impl FromStr for Menu {
+    type Err = &'static str;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s != "menu" {
+            return Err("Menu must be 'menu'");
         }
-        None
-    }
-    pub fn add_pages(
-        &self,
-        project: &mut Project,
-    ) {
-        for (title, item) in &self.items {
-            match item {
-                MenuItem::Page(path) => {
-                    if !project.pages.contains_key(path) {
-                        let md_file_path = path.md_path_buf(&project.src_path);
-                        let page = Page::new(title.clone(), path.clone(), md_file_path);
-                        project.pages.insert(path.clone(), page);
-                    }
-                }
-                MenuItem::SubMenu(submenu) => {
-                    submenu.add_pages(project);
-                }
-            }
-        }
-    }
-    pub fn add_page_paths<'m>(
-        &'m self,
-        list: &mut Vec<&'m PagePath>,
-    ) {
-        for item in self.items.values() {
-            match item {
-                MenuItem::Page(path) => {
-                    if !list.contains(&path) {
-                        list.push(path);
-                    }
-                }
-                MenuItem::SubMenu(submenu) => {
-                    submenu.add_page_paths(list);
-                }
-            }
-        }
-    }
-    pub fn previous(
-        &self,
-        current_page: &PagePath,
-    ) -> Option<&PagePath> {
-        let mut page_paths = Vec::new();
-        self.add_page_paths(&mut page_paths);
-        for (i, path) in page_paths.iter().enumerate() {
-            if path == &current_page {
-                if i > 0 {
-                    return Some(page_paths[i - 1]);
-                } else {
-                    return None;
-                }
-            }
-        }
-        None
-    }
-    pub fn next(
-        &self,
-        current_page: &PagePath,
-    ) -> Option<&PagePath> {
-        let mut page_paths = Vec::new();
-        self.add_page_paths(&mut page_paths);
-        for (i, path) in page_paths.iter().enumerate() {
-            if path == &current_page {
-                if i + 1 < page_paths.len() {
-                    return Some(page_paths[i + 1]);
-                } else {
-                    return None;
-                }
-            }
-        }
-        None
-    }
-    pub fn push_nav(
-        &self,
-        html: &mut String,
-        project: &Project,
-        nav_class_name: &ClassName,
-        hosting_page_path: &PagePath,
-    ) -> DdResult<()> {
-        writeln!(html, "<nav class=\"site-nav {nav_class_name}\">")?;
-        if project.config.ui.hamburger_checkbox {
-            html.push_str(
-                "<input type=checkbox id=nav-toggle class=nav-toggle>\n\
-                 <label for=nav-toggle class=nav-toggle-label>☰</label>\n",
-            );
-        }
-        self.push_nav_item_html(html, project, hosting_page_path);
-        html.push_str("</nav>\n");
-        Ok(())
-    }
-    /// Generate the HTML for a menu or submenu hosted on a page.
-    #[allow(clippy::only_used_in_recursion)]
-    fn push_nav_item_html(
-        &self,
-        html: &mut String,
-        project: &Project,
-        hosting_page_path: &PagePath,
-    ) {
-        html.push_str("<ul class=\"nav-menu\">\n");
-        for (title, item) in &self.items {
-            let (link, selected) = match item {
-                MenuItem::Page(path) => {
-                    (hosting_page_path.link_to(path), path == hosting_page_path)
-                }
-                MenuItem::SubMenu(submenu) => {
-                    let first_page_path = submenu.first_page_path();
-                    let link = first_page_path
-                        .as_ref()
-                        .map(|p| hosting_page_path.link_to(p))
-                        .unwrap_or_else(|| "#".to_string());
-                    (link, false)
-                }
-            };
-            let selected_class = if selected { "selected" } else { "not-selected" };
-            let _ = writeln!(
-                html,
-                "<li class=\"nav-item {}\"><a href=\"{}\">{}</a>",
-                selected_class, link, title,
-            );
-            if let MenuItem::SubMenu(submenu) = item {
-                submenu.push_nav_item_html(html, project, hosting_page_path);
-            }
-            html.push_str("</li>\n");
-        }
-        html.push_str("</ul>\n");
+        Ok(Self {
+            hamburger_checkbox: true,
+        })
     }
 }
 
-impl MenuItem {
-    pub fn first_page_path(&self) -> Option<PagePath> {
-        match self {
-            MenuItem::Page(path) => Some(path.clone()),
-            MenuItem::SubMenu(submenu) => submenu.first_page_path(),
+impl Default for Menu {
+    fn default() -> Self {
+        Self {
+            hamburger_checkbox: true,
         }
+    }
+}
+
+impl From<Attributes> for Menu {
+    fn from(map: Attributes) -> Self {
+        let mut menu_insert = Menu::default();
+        if let Some(v) = map.get("hamburger_checkbox") {
+            if let Some(b) = v.as_bool() {
+                menu_insert.hamburger_checkbox = b;
+            }
+        }
+        menu_insert
+    }
+}
+
+impl fmt::Display for Menu {
+    fn fmt(
+        &self,
+        f: &mut fmt::Formatter<'_>,
+    ) -> fmt::Result {
+        write!(f, "menu")
+    }
+}
+impl serde::Serialize for Menu {
+    fn serialize<S: serde::Serializer>(
+        &self,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+impl<'de> serde::Deserialize<'de> for Menu {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let s = String::deserialize(deserializer)?;
+        s.parse().map_err(serde::de::Error::custom)
     }
 }

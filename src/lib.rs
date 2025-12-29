@@ -48,6 +48,7 @@ mod html;
 mod init;
 mod page;
 mod page_path;
+mod page_writer;
 mod project;
 mod server;
 mod statics;
@@ -62,6 +63,7 @@ pub use {
     init::*,
     page::*,
     page_path::*,
+    page_writer::*,
     project::*,
     server::*,
     statics::*,

@@ -1,41 +1,61 @@
 use {
     crate::*,
-    serde::de,
+    serde::{
+        Deserialize,
+        de,
+    },
     std::fmt,
+    termimad::crossterm::style::Stylize,
 };
 
 #[derive(Debug, Clone, Default)]
 pub struct CompositeElement {
-    pub entries: Vec<CompositeElementEntry>,
+    pub children: Vec<Element>,
 }
-#[derive(Debug, Clone)]
-pub struct CompositeElementEntry {
-    pub key: ElementKey,
-    pub value: Element,
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(untagged)]
+enum DeserContent {
+    Composite(CompositeElement),
+    Attributes(Attributes),
 }
 
 impl CompositeElement {
-    pub fn get(
+    pub fn child(
         &self,
         index: usize,
-    ) -> Option<&CompositeElementEntry> {
-        self.entries.get(index)
+    ) -> Option<&Element> {
+        self.children.get(index)
     }
     pub fn len(&self) -> usize {
-        self.entries.len()
+        self.children.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.children.is_empty()
     }
     pub fn visit<F>(
         &self,
         mut f: F,
     ) where
-        F: FnMut(&ElementKey, &Element),
+        F: FnMut(&Element),
     {
-        for entry in &self.entries {
-            f(&entry.key, &entry.value);
-            if let Element::Composite(comp) = &entry.value {
-                comp.visit(&mut f);
-            }
+        for child in &self.children {
+            child.visit(&mut f);
         }
+    }
+    pub fn has_href(
+        &self,
+        href: &str,
+    ) -> bool {
+        let mut found = false;
+        self.visit(|element: &Element| {
+            if let ElementContent::Link(link) = &element.content {
+                if link.href.as_deref() == Some(href) {
+                    found = true;
+                }
+            }
+        });
+        found
     }
 }
 
@@ -56,11 +76,46 @@ impl<'de> de::Visitor<'de> for CompositeElementDeserializer {
     where
         M: serde::de::MapAccess<'de>,
     {
-        let mut entries = Vec::new();
-        while let Some((key, value)) = access.next_entry::<ElementKey, Element>()? {
-            entries.push(CompositeElementEntry { key, value });
+        let mut children = Vec::new();
+        while let Some((key, value)) = access.next_entry::<ElementKey, DeserContent>()? {
+            let ElementKey { etype, classes: _ } = key;
+            let content = match (etype, value) {
+                (ElementType::HtmlTag(tag), DeserContent::Composite(comp)) => {
+                    ElementContent::Html {
+                        tag,
+                        children: comp.children,
+                    }
+                }
+                (ElementType::Link, DeserContent::Attributes(attrs)) => {
+                    let nav_link: NavLink = attrs.into();
+                    ElementContent::Link(nav_link)
+                }
+                (ElementType::Menu, DeserContent::Attributes(attrs)) => {
+                    let menu_insert: Menu = attrs.into();
+                    ElementContent::Menu(menu_insert)
+                }
+                (ElementType::Menu, _) => ElementContent::Menu(Menu::default()),
+                (ElementType::Toc, _) => ElementContent::Toc,
+                (ElementType::Main, _) => ElementContent::Main,
+                (etype, value) => {
+                    eprintln!(
+                        "{}: invalid element type {} for value {:?}",
+                        "error".red(),
+                        etype.to_string().yellow(),
+                        value,
+                    );
+                    return Err(de::Error::custom(format!(
+                        "invalid element type {:?} for value {:?}",
+                        etype, value
+                    )));
+                }
+            };
+            children.push(Element {
+                classes: key.classes,
+                content,
+            });
         }
-        Ok(Self::Value { entries })
+        Ok(Self::Value { children })
     }
 }
 impl<'de> de::Deserialize<'de> for CompositeElement {
@@ -73,11 +128,11 @@ impl<'de> de::Deserialize<'de> for CompositeElement {
 }
 
 #[test]
-fn test_element_deserialization() {
+fn test_composite_element_deserialization() {
     let hjson = r#"
     {
         header: {
-            div.before-menu: {
+            nav.before-menu: {
                 ddoc-link: {
                     img: img/dystroy-rust-white.svg
                     href: https://dystroy.org
@@ -94,7 +149,7 @@ fn test_element_deserialization() {
             ddoc-menu: {
                 hamburger-checkbox: true
             }
-            div.after-menu: {
+            nav.after-menu: {
                 ddoc-link: {
                     img: img/ddoc-left-arrow.svg
                     href: --previous
@@ -128,7 +183,7 @@ fn test_element_deserialization() {
             ddoc-main: {}
         }
         footer: {
-            div.made-with-ddoc: {
+            nav.made-with-ddoc: {
                 ddoc-link: {
                     label: made with
                 }
@@ -139,51 +194,16 @@ fn test_element_deserialization() {
                 }
             }
         }
-
     }
     "#;
-    let element: Element = deser_hjson::from_str(hjson).unwrap();
-    let header = element
-        .as_composite()
-        .unwrap()
-        .get(0)
-        .unwrap()
-        .value
-        .as_composite()
-        .unwrap();
-    assert_eq!(header.len(), 3);
-    let after_menu = header.get(2).unwrap();
-    assert_eq!(after_menu.key.to_string(), "div.after-menu");
-    assert_eq!(after_menu.key.classes[0], "after-menu");
-    let after_menu = after_menu.value.as_composite().unwrap();
-    assert_eq!(after_menu.len(), 4);
-    assert_eq!(after_menu.get(2).unwrap().key.etype, ElementType::Link);
-    assert_eq!(
-        after_menu
-            .get(2)
-            .unwrap()
-            .value
-            .as_attributes()
-            .unwrap()
-            .get("href")
-            .unwrap()
-            .as_str()
-            .unwrap(),
-        "--next"
-    );
-    let toc = element
-        .as_composite()
-        .unwrap()
-        .get(1)
-        .unwrap()
-        .value
-        .as_composite()
-        .unwrap()
-        .get(0)
-        .unwrap()
-        .value
-        .as_composite()
-        .unwrap()
-        .get(0)
-        .unwrap();
+    let composite: CompositeElement = deser_hjson::from_str(hjson).unwrap();
+    assert_eq!(composite.children.len(), 3);
+    let header = &composite.children[0];
+    assert!(matches!(
+        header.children().unwrap()[1].content,
+        ElementContent::Menu(_)
+    ));
+    let article = &composite.children[1];
+    let toc = &article.children().unwrap()[0];
+    assert!(toc.is_toc());
 }

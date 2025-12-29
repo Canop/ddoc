@@ -25,58 +25,62 @@ favicon: null // eg "img/favicon.ico"
 //         "Advanced Topics": guide/advanced_topics.md
 //     }
 // }
-pages: {
+site-map: {
     Home: index.md
 }
 
-// Header and footer links can have { img, href, class, label, alt, target}.
+// This describes the content of the <body> element of each page.
+// Elements starting with 'ddoc-' will be replaced by special items:
+// links, page TOC, global menu, main HTML translated from markdown, etc.
+//
+// Links (ddoc-link) can have { img, href, label, alt, target}.
 // All these fields are optional.
 // Hrefs starting with '/' are relative to the site's root (eg '/guide/help.md')
-// You can remove any part if you don't want it.
-header: {
-    before-menu: [ // "before-menu" is the className which will be applied
-        // this is a good place for a logo or a link to a wider site
-    ]
-    middle: menu
-    after-menu: [
-        {
-            img: img/ddoc-left-arrow.svg
-            href: --previous
-            class: previous-page-link
-            alt: Previous Page
+body: {
+    header: {
+        nav.before-menu: {
+            // this is a good place for a logo or a link to a wider site
         }
-        {
-            img: img/ddoc-search.svg
-            href: --search
-            class: search-opener
-            alt: Search
+        ddoc-menu: {
+            // if true, the generated HTML includes a checkbox which
+            // can be styled into a hamburger menu for small screens
+            hamburger-checkbox: true
         }
-        {
-            img: img/ddoc-right-arrow.svg
-            href: --next
-            class: next-page-link
-            alt: Next Page
+        nav.after-menu: {
+            ddoc-link.previous-page-link: {
+                img: img/ddoc-left-arrow.svg
+                href: --previous
+                alt: Previous Page
+            }
+            ddoc-link.search-opener: {
+                img: img/ddoc-search.svg
+                href: --search
+                alt: Search
+            }
+            ddoc-link.next-page-link: {
+                img: img/ddoc-right-arrow.svg
+                href: --next
+                alt: Next Page
+            }
+            <github-navlink>
         }
-        <github-navlink>
-    ]
-}
-footer: {
-}
-
-// UI options
-ui: {
-    // if true, the generated HTML includes a checkbox which
-    // can be styled into a hamburger menu for small screens
-    hamburger_checkbox: true
+    }
+    article: {
+        aside.page-nav: {
+            ddoc-toc: {}
+        }
+        ddoc-main: {}
+    }
+    footer: {
+    }
 }
 
 "#;
-static TEMPLATE_GITHUB_NAVLINK: &str = r#"{
-            img: img/github-mark-white.svg
-            class: external-nav-link
-            alt: GitHub
-            href: <url>
-        }"#;
+static TEMPLATE_GITHUB_NAVLINK: &str = r#"ddoc-link.external-nav-link: {
+                img: img/github-mark-white.svg
+                alt: GitHub
+                href: <url>
+            }"#;
 
 /// Initialize a ddoc.hjson file in the specified directory
 /// (do nothing if one already exists)

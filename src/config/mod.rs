@@ -1,20 +1,21 @@
+mod attribute;
 mod composite_element;
 mod element;
 mod element_key;
 mod menu;
-mod menu_insert;
 mod nav_component;
 mod nav_link;
-mod v2;
+mod page_list;
 
 pub use {
+    attribute::*,
     composite_element::*,
     element::*,
     element_key::*,
     menu::*,
-    menu_insert::*,
     nav_component::*,
     nav_link::*,
+    page_list::*,
 };
 
 use {
@@ -31,20 +32,20 @@ use {
 
 pub static CONFIG_FILE_NAME: &str = "ddoc.hjson";
 
+pub type ClassName = String;
+
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct Config {
     pub title: String,
     pub description: Option<String>,
-    pub repo_url: Option<String>,
-    #[serde(alias = "pages")]
-    pub menu: Menu,
+    #[serde(alias = "pages", alias = "menu")]
+    pub site_map: PageList,
     pub favicon: Option<String>,
-    #[serde(default)]
-    pub header: NavDir, // deprecate - move as transparent in an OldBodyElement struct
-    #[serde(default)]
-    pub footer: NavDir, // deprecate - move as transparent in an OldBodyElement struct
-    #[serde(default)]
-    pub ui: UiOptions, // deprecate - move as transparent in an OldBodyElement struct
+    /// for compatibility with ddoc (0.10-), this is loaded but only used
+    /// through conversion to the new `body` field
+    #[serde(flatten)]
+    old: NavComponents,
     #[serde(default)]
     pub body: CompositeElement,
 }
@@ -72,7 +73,14 @@ impl Config {
         self.favicon.as_deref().filter(|s| !s.is_empty())
     }
     pub fn needs_search_script(&self) -> bool {
-        self.header.has_href("--search")
+        self.body.has_href("--search")
+    }
+    /// For support of old ddoc versions (<= 0.10), convert old nav components
+    /// if the new `body` field is empty
+    pub fn fix_old(&mut self) {
+        if self.body.children.is_empty() {
+            self.body = self.old.into_body_composite();
+        }
     }
 }
 
