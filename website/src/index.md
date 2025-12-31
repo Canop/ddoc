@@ -38,13 +38,6 @@ Summarizing the goals and features of **ddoc**:
 * ddoc has no plugin system
 * ddoc is very new and might need fixes according to feedback
 
-## Possible future features
-
-* Automated lists and page types, to make ddoc suitable for blogs, albums, etc.
-* Image processing
-
-Those goals are pre-designed for retro-compatibility, to ensure ddoc sites aren't broken by new versions.
-
 ## Getting Started
 
 * [Install ddoc](install)
