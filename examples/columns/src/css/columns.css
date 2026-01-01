@@ -1,8 +1,10 @@
 :root {
     --header-height: 70px;
-    --header-bg: linear-gradient(#5d5d5d, #e3e1e2);
-    --header-fg: #eee;
-    --header-fg-accent: #fff;
+    --header-bg: linear-gradient(#f0f0f0, #fff);
+    --header-fg: #444;
+    --header-fg-accent: #000;
+	--code-fg: #111;
+	--code-bg: #eee;
 }
 
 body, div, nav, main {
@@ -55,10 +57,21 @@ div.columns {
     justify-content: center;
 }
 
-header .nav-link img {
+.nav-link img, .nav-link svg {
 	max-width: 40px;
 	max-height: 40px;
 	margin: 0 10px;
+}
+.nav-link svg, .nav-link svg path {
+    fill: var(--header-fg);
+    stroke: var(--header-fg);
+}
+.nav-link:hover {
+    color: var(--header-fg-accent);
+}
+.nav-link:hover svg, .nav-link:hover svg path {
+    fill: var(--header-fg-accent);
+    stroke: var(--header-fg-accent);
 }
 .nav-link span {
 	margin: 0 5px;
@@ -69,6 +82,9 @@ nav.site-nav {
     overflow-y: auto;
     padding: 10px 20px;
 }
+ul.nav-menu {
+    padding-inline-start: 20px;
+}
 .columns .center {
     flex: 0 1 800px;
     background: #fff;
@@ -76,6 +92,7 @@ nav.site-nav {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    border-radius: 7px 0 0 0;
 }
 main {
     flex: 1 0 auto;
@@ -95,6 +112,7 @@ nav.page-toc {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-radius: 0 7px 0 0;
 }
 aside.nav-icons {
     display: flex;
@@ -109,6 +127,9 @@ aside.nav-icons .nav-link img {
 
 nav.site-nav li {
     display: block;
+}
+nav.site-nav li:hover > a {
+    color: var(--header-fg-accent);
 }
 nav.site-nav li a {
     text-decoration: none;
@@ -142,4 +163,34 @@ div.page-title {
 	#nav-toggle, .nav-toggle-label { /* hide hamburger on wide screens */
 		display: none;
 	}
+}
+
+code {
+    padding: 2px 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+	border-radius: 0;
+	color: var(--code-fg);
+	background: var(--code-bg);
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-size: 80%;
+}
+
+pre code {
+    display: block;
+    background: transparent;
+    border: none;
+    white-space: pre;
+    word-wrap: normal;
+}
+
+pre {
+	padding: 0;
+	border-radius: 5px;
+	color: var(--code-fg);
+	background: var(--code-bg);
+	border: solid 1px var(--code-bg);
+	font-weight: normal;
+	padding: 6px 0 4px 6px;
+	max-width: 800px;
 }

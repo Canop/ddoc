@@ -74,13 +74,8 @@ pub fn init_src_in_dir(
         "ddoc-right-arrow.svg",
         include_bytes!("../../resources/src/img/ddoc-right-arrow.svg"),
     )?;
-    // the following images could be written only if the github navlink is used,
-    // but we'd fail people willing to add it later, so we just add them now
-    write_image_if_not_exists(
-        &img_dir,
-        "github-mark-white.svg",
-        include_bytes!("../../resources/src/img/github-mark-white.svg"),
-    )?;
+    // the following image could be written only if the github navlink is used,
+    // but we'd fail people willing to add it later, so we just add it now
     write_image_if_not_exists(
         &img_dir,
         "github-mark.svg",

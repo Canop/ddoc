@@ -1,3 +1,10 @@
+:root {
+    --header-height: 70px;
+    --header-bg: linear-gradient(#f0f0f0, #fff);
+    --header-fg: #333;
+    --header-fg-accent: #000;
+}
+
 @media (max-width: 768px) { /* mobile */
 	body:has(#nav-toggle:checked) .center {
         visibility: hidden; /* hide main content when menu is open */
@@ -32,7 +39,7 @@
 		cursor: pointer;
 		display: inline-block;
 		user-select: none;
-        color: white;
+        color: var(--header-fg);
 	}
 	/* Show menu when hamburger checkbox is checked */
 	nav.site-nav #nav-toggle:checked ~ ul.nav-menu {
@@ -45,6 +52,11 @@
         left: 0;
         bottom: 0;
     }
+	.columns aside.nav-icons svg {
+		width: 30px;
+		height: 30px;
+		margin: 10px;
+	}
 	.columns nav.page-toc {
 		display: none; /* hide prev/next on small screens */
 	}

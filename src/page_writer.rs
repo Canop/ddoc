@@ -10,6 +10,7 @@ use {
         html::push_html,
     },
     std::fmt::Write,
+    termimad::crossterm::style::Stylize,
 };
 
 pub struct PageWriter<'p> {
@@ -299,6 +300,20 @@ impl<'p> PageWriter<'p> {
                 write!(html, " title=\"{alt}\"")?;
             }
             html.push('>');
+        }
+        if let Some(path) = &link.inline {
+            match self.project.load_file(path)? {
+                Some(content) => {
+                    html.push_str(&content);
+                }
+                None => {
+                    eprintln!(
+                        "{}: file not found in ddoc-link configuration: {}",
+                        "error".red().bold(),
+                        path.to_string().red(),
+                    );
+                }
+            }
         }
         if let Some(label) = &link.label {
             let label = escape_text(label);

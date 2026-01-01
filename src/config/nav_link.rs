@@ -11,6 +11,7 @@ use {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct NavLink {
     pub img: Option<String>,
+    pub inline: Option<String>,
     pub label: Option<String>,
     pub alt: Option<String>,
     #[serde(alias = "url")]
@@ -24,6 +25,10 @@ impl From<Attributes> for NavLink {
     fn from(map: IndexMap<AttributeKey, AttributeValue>) -> Self {
         let img = map
             .get("img")
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string());
+        let inline = map
+            .get("inline")
             .and_then(|v| v.as_str())
             .map(|s| s.to_string());
         let label = map
@@ -49,6 +54,7 @@ impl From<Attributes> for NavLink {
             .map(|s| s.to_string());
         Self {
             img,
+            inline,
             label,
             alt,
             href,

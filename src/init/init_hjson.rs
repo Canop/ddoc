@@ -48,17 +48,17 @@ body: {
         }
         nav.after-menu: {
             ddoc-link.previous-page-link: {
-                img: img/ddoc-left-arrow.svg
+                inline: img/ddoc-left-arrow.svg
                 href: --previous
                 alt: Previous Page
             }
             ddoc-link.search-opener: {
-                img: img/ddoc-search.svg
+                inline: img/ddoc-search.svg
                 href: --search
                 alt: Search
             }
             ddoc-link.next-page-link: {
-                img: img/ddoc-right-arrow.svg
+                inline: img/ddoc-right-arrow.svg
                 href: --next
                 alt: Next Page
             }
@@ -77,7 +77,7 @@ body: {
 
 "#;
 static TEMPLATE_GITHUB_NAVLINK: &str = r#"ddoc-link.external-nav-link: {
-                img: img/github-mark-white.svg
+                inline: img/github-mark.svg
                 alt: GitHub
                 href: <url>
             }"#;

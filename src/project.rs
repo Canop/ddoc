@@ -275,6 +275,17 @@ impl Project {
             None => Cow::Borrowed(src),
         }
     }
+    pub fn load_file(
+        &self,
+        path: &str,
+    ) -> DdResult<Option<String>> {
+        let file_path = self.src_path.join(path);
+        if !file_path.exists() {
+            return Ok(None);
+        }
+        let content = fs::read_to_string(file_path)?;
+        Ok(Some(content))
+    }
     /// Check if the given `PagePath` exists in the project,
     /// write an error if it does not.
     pub fn check_page_path(
