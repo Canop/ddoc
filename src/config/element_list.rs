@@ -97,6 +97,7 @@ impl<'de> de::Visitor<'de> for ElementListDeserializer {
                 (ElementType::Menu, _) => ElementContent::Menu(Menu::default()),
                 (ElementType::Toc, _) => ElementContent::Toc,
                 (ElementType::Main, _) => ElementContent::Main,
+                (ElementType::PageTitle, _) => ElementContent::PageTitle,
                 (etype, value) => {
                     eprintln!(
                         "{}: invalid element type {} for value {:?}",

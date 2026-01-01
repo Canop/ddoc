@@ -35,7 +35,10 @@ impl Default for Menu {
 impl From<Attributes> for Menu {
     fn from(map: Attributes) -> Self {
         let mut menu_insert = Menu::default();
-        if let Some(v) = map.get("hamburger_checkbox") {
+        if let Some(v) = map
+            .get("hamburger_checkbox")
+            .or_else(|| map.get("hamburger-checkbox"))
+        {
             if let Some(b) = v.as_bool() {
                 menu_insert.hamburger_checkbox = b;
             }

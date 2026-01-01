@@ -241,6 +241,13 @@ impl<'p> PageWriter<'p> {
                 }
                 html.push_str("</nav>\n");
             }
+            ElementContent::PageTitle => {
+                // Here we don't wrap in any tag, just output the title text
+                // This has the downside of ignoring any classes specified on the element
+                // Maybe wrap in a div when classes are specified?
+                // Or allow a tag as atribute to PageTitle element?
+                html.push_str(&escape_text(&self.page.title));
+            }
             ElementContent::Main => {
                 html.push_str("<main>\n"); // fixme add classes?
                 html.push_str(&self.main);

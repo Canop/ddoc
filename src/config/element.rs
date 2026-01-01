@@ -13,6 +13,7 @@ pub enum ElementContent {
     Menu(Menu),
     Toc,
     Main,
+    PageTitle,
 }
 
 impl Element {
@@ -24,6 +25,7 @@ impl Element {
             ElementContent::Menu(_) => "ddoc-menu",
             ElementContent::Toc => "ddoc-toc",
             ElementContent::Main => "ddoc-main",
+            ElementContent::PageTitle => "ddoc-page-title",
         }
     }
     pub fn is_html(&self) -> bool {

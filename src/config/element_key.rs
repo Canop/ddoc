@@ -19,6 +19,7 @@ pub enum ElementType {
     Link,
     Toc,
     Main,
+    PageTitle,
 }
 
 impl fmt::Display for ElementType {
@@ -32,6 +33,7 @@ impl fmt::Display for ElementType {
             ElementType::Link => write!(f, "ddoc-link"),
             ElementType::Toc => write!(f, "ddoc-toc"),
             ElementType::Main => write!(f, "ddoc-main"),
+            ElementType::PageTitle => write!(f, "ddoc-page-title"),
         }
     }
 }
@@ -59,6 +61,7 @@ impl FromStr for ElementKey {
             "ddoc-link" => ElementType::Link,
             "ddoc-toc" => ElementType::Toc,
             "ddoc-main" => ElementType::Main,
+            "ddoc-page-title" => ElementType::PageTitle,
             tag => ElementType::HtmlTag(tag.to_string()),
         };
         let classes = parts[1..].iter().map(|s| s.to_string()).collect();
