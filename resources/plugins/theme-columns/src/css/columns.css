@@ -270,6 +270,9 @@ footer {
 nav.page-toc {
     justify-content: center;
 }
+nav.page-toc.empty {
+    display: none;
+}
 aside.nav-icons {
     display: flex;
     flex-direction: column;

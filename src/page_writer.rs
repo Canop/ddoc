@@ -307,7 +307,11 @@ impl<'p> PageWriter<'p> {
                 )?;
             }
             ElementContent::Toc(toc) => {
-                html.push_str("<nav class=page-toc>\n");
+                html.push_str("<nav class=\"page-toc");
+                if self.toc.is_empty() {
+                    html.push_str(" empty");
+                }
+                html.push_str("\">\n");
                 html.push_str("<a class=toc-title href=\"#top\">");
                 let title = toc.title.as_ref().unwrap_or(&self.page.title);
                 let title = escape_text(title);

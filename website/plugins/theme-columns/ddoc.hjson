@@ -54,11 +54,8 @@ body: {
             }
         }
         div.right-column: {
-            a.on-this-page: {
-                text: "on this page:"
-                href: "#top"
-            }
             ddoc-toc: {
+                title: "on this page:"
             }
         }
     }
