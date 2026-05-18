@@ -129,11 +129,6 @@ impl<'p> PageWriter<'p> {
         html: &mut String,
     ) -> DdResult<()> {
         self.write_html_head(html)?;
-        write!(html, "<body class=\"page-{}", &self.page_path().stem)?;
-        for name in self.project.plugin_names() {
-            write!(html, " plugin-{name}")?;
-        }
-        writeln!(html, "\">\n")?;
         self.write_element(html, &self.config().body)?;
         html.push_str("</html>\n");
         Ok(())
@@ -288,7 +283,20 @@ impl<'p> PageWriter<'p> {
                 self.write_closing_tag(html, tag);
             }
             ElementContent::DomTree { tag, children } => {
-                self.write_opening_tag(html, tag, &element.classes);
+                let mut classes = &element.classes;
+                let mut body_classes;
+                if tag == "body" {
+                    // body specific classes: page name and plugins
+                    body_classes = classes.to_vec();
+                    body_classes.push(format!("page-{}", self.page_path().stem));
+                    body_classes.extend(
+                        self.project
+                            .plugin_names()
+                            .map(|name| format!("plugin-{name}")),
+                    );
+                    classes = &body_classes;
+                }
+                self.write_opening_tag(html, tag, classes);
                 html.push_str(">\n");
                 for child in children {
                     self.write_element(html, child)?;
