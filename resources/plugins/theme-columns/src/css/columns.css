@@ -105,6 +105,7 @@ body, div, nav, main, pre {
         z-index: 100;
         background: var(--header-bg);
         height: 100vh;
+        flex-shrink: 0; /* Prevents header width variance from shifting layout */
     }
     header::before {
         content: "";
@@ -139,6 +140,7 @@ body, div, nav, main, pre {
         align-items: flex-start;
         height: 100vh;
         border-right: var(--border);
+        flex-shrink: 0; /* Guarantees width stays exactly at the calc() value */
     }
     div.page {
         display: flex;

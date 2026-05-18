@@ -11,6 +11,7 @@
     gap: 10px;
     position: relative;
     margin-bottom: 40px;
+    contain: layout inline-size;
 }
 
 .image-strip img {
