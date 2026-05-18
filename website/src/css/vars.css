@@ -8,7 +8,8 @@ body {
 	--header-shadow: none;
 	--menu-head-border: none;
 	--selected-menu-head-border: none;
-	--nav-selected-border: 4px solid #ffd700;
+	--nav-hovered-border: 5px solid #ffd70044;
+	--nav-selected-border: 5px solid #ffd700;
 	--hovered-menu-bg: #ddd;
 	--mobile-submenu-bg: #eee;
 	--toc-bg: var(--nav-bg);

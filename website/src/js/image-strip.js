@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const strip = document.querySelector('.image-strip');
+    if (!strip) return;
     const bubble = document.createElement('div');
     bubble.className = 'image-bubble';
     const bubbleImg = document.createElement('img');
